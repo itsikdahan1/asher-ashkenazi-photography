@@ -1,0 +1,95 @@
+@import url('https://fonts.googleapis.com/css2?family=Assistant:wght@200;300;400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Assistant", ui-sans-serif, system-ui, sans-serif;
+  --color-charcoal: #0A0A0A;
+  --color-cream: #FAF9F6;
+  --color-turquoise: #2AC1BC;
+  --color-turquoise-deep: #1A8A86;
+}
+
+@layer base {
+  body {
+    @apply bg-charcoal text-cream antialiased selection:bg-turquoise selection:text-charcoal;
+    direction: rtl;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3column-count: 0;%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    background-attachment: fixed;
+    background-blend-mode: overlay;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-white/[0.03] backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)];
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-br from-cream via-cream/90 to-turquoise;
+  }
+
+  .bento-card {
+    @apply relative overflow-hidden rounded-3xl border border-white/[0.08] bg-white/[0.02] p-8 transition-all duration-500 hover:bg-white/[0.05] hover:border-turquoise/30;
+  }
+}
+
+.masonry-grid {
+  column-gap: 1.5rem;
+  column-count: 1;
+}
+
+@media (min-width: 640px) {
+  .masonry-grid {
+    column-count: 2;
+  }
+}
+
+@media (min-width: 1024px) {
+  .masonry-grid {
+    column-count: 3;
+  }
+}
+
+.masonry-item {
+  break-inside: avoid;
+  margin-bottom: 1.5rem;
+}
+
+/* Accessibility Support */
+.accessibility-high-contrast {
+  filter: contrast(1.5) brightness(1.1);
+}
+
+.accessibility-high-contrast body {
+  background: #000 !important;
+  color: #fff !important;
+}
+
+.accessibility-grayscale {
+  filter: grayscale(1);
+}
+
+.accessibility-large-font {
+  font-size: 1.15rem;
+}
+
+.accessibility-large-font h1 { font-size: 120%; }
+.accessibility-large-font h2 { font-size: 120%; }
+.accessibility-large-font h3 { font-size: 120%; }
+.accessibility-large-font p { font-size: 120%; }
+
+.accessibility-highlight-links a {
+  background-color: yellow !important;
+  color: black !important;
+  text-decoration: underline !important;
+  font-weight: bold !important;
+}
+
+.accessibility-readable-font {
+  --font-sans: Arial, Helvetica, sans-serif !important;
+}
+
+.accessibility-stop-animations * {
+  animation: none !important;
+  transition: none !important;
+}
