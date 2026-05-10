@@ -88,4 +88,5 @@ function doPost(event) {
 
 - ה-URL של Apps Script יכול להיות ציבורי, אבל כתיבה מוגנת באמצעות `ADMIN_TOKEN`.
 - אל תשתמש בטוקן קצר.
-- `VITE_ADMIN_ACCESS_TOKEN` הוא רק שער כניסה בצד הלקוח. להגנה חזקה יותר, מומלץ להוסיף גם Basic Auth / Deployment Protection ב-Vercel.
+- הכניסה ל-`/admin` מתבצעת עם Google דרך Firebase Authentication ומוגבלת לכתובות המייל המורשות בקוד.
+- להגנה חזקה יותר, מומלץ להוסיף גם Deployment Protection ב-Vercel או בדיקת הרשאה בצד שרת אם מוסיפים backend בעתיד.
