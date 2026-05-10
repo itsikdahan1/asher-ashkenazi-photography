@@ -77,7 +77,7 @@ export default function Footer() {
                <Mail size={32} className="text-turquoise" />
                <div className="overflow-hidden">
                  <span className="text-xs font-black uppercase tracking-widest block mb-1 text-white/40">כתובת מייל</span>
-                 <span className="text-xl lg:text-2xl font-bold text-white truncate block">{business.email}</span>
+                 <span className="text-xl lg:text-2xl font-bold text-white break-all block">{business.email}</span>
                </div>
             </div>}
           </div>
