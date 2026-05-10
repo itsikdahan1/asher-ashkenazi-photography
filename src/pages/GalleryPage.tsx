@@ -20,24 +20,24 @@ export default function GalleryPage() {
       <Header />
       
       <div className="max-w-7xl mx-auto px-6 mb-24">
-        <header className="mb-16">
+        <header className="mb-12 md:mb-16">
           <h1 className="text-5xl md:text-7xl font-bold mb-6 tracking-tighter">{content.gallery.title}</h1>
-          <p className="text-cream/60 max-w-2xl font-light leading-relaxed">
+          <p className="text-cream/70 max-w-2xl font-normal leading-relaxed text-lg">
             {content.gallery.description}
           </p>
         </header>
 
         {/* Filter Bar */}
         {allImages.length > 0 && (
-          <div className="flex flex-wrap gap-4 mb-12">
+          <div className="flex flex-wrap gap-3 md:gap-4 mb-12 rounded-[2rem] border border-white/[0.06] bg-white/[0.025] p-3">
             {categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setFilter(cat)}
-                className={`px-8 py-2 rounded-full border transition-all text-sm font-medium ${
+                className={`px-6 md:px-8 py-2.5 rounded-full border transition-all text-sm font-bold ${
                   filter === cat 
                     ? 'bg-turquoise border-turquoise text-charcoal' 
-                    : 'border-white/10 text-cream/60 hover:border-cream/30'
+                    : 'border-white/10 text-cream/70 hover:border-cream/30 hover:bg-white/[0.06] hover:text-cream'
                 }`}
               >
                 {cat}
@@ -56,7 +56,7 @@ export default function GalleryPage() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.4 }}
-                className="masonry-item group relative overflow-hidden rounded-2xl"
+                className="masonry-item group relative overflow-hidden rounded-[1.5rem] border border-white/[0.06] bg-white/[0.04] shadow-[0_24px_80px_-62px_rgba(0,0,0,0.95)]"
               >
                 <img 
                   src={img.url} 
@@ -72,7 +72,7 @@ export default function GalleryPage() {
             ))}
           </div>
         ) : (
-          <div className="rounded-[2rem] border border-white/10 bg-white/[0.03] p-10 text-center text-cream/50">
+          <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-10 text-center text-cream/70 shadow-[0_24px_80px_-62px_rgba(0,0,0,0.95)]">
             {content.gallery.emptyMessage}
           </div>
         )}

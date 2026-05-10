@@ -3,38 +3,47 @@
 
 @theme {
   --font-sans: "Assistant", ui-sans-serif, system-ui, sans-serif;
-  --color-charcoal: #0A0A0A;
-  --color-cream: #FAF9F6;
+  --color-charcoal: #0D0E10; /* Slightly lighter black for less harsh contrast */
+  --color-charcoal-light: #181A1E; /* For subtle depth */
+  --color-cream: #FAF7EF; /* Clean white-ish */
   --color-turquoise: #2AC1BC;
   --color-turquoise-deep: #1A8A86;
 }
 
 @layer base {
+  html {
+    @apply scroll-smooth;
+  }
+
   body {
     @apply bg-charcoal text-cream antialiased selection:bg-turquoise selection:text-charcoal;
     direction: rtl;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3column-count: 0;%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    background-image: radial-gradient(circle at 80% 0%, rgba(42, 193, 188, 0.08), transparent 34rem), url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.045'/%3E%3C/svg%3E");
     background-attachment: fixed;
     background-blend-mode: overlay;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-4 outline-turquoise;
   }
 }
 
 @layer utilities {
   .glass {
-    @apply bg-white/[0.03] backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)];
+    @apply bg-white/[0.045] backdrop-blur-xl border border-white/[0.08] shadow-[0_18px_60px_-32px_rgba(0,0,0,0.75)];
   }
 
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-br from-cream via-cream/90 to-turquoise;
+    @apply bg-clip-text text-transparent bg-gradient-to-br from-cream via-cream/80 to-turquoise/80;
   }
 
   .bento-card {
-    @apply relative overflow-hidden rounded-3xl border border-white/[0.08] bg-white/[0.02] p-8 transition-all duration-500 hover:bg-white/[0.05] hover:border-turquoise/30;
+    @apply relative overflow-hidden rounded-[2rem] border border-white/[0.08] bg-white/[0.035] p-8 shadow-[0_24px_80px_-56px_rgba(0,0,0,0.9)] transition-all duration-300 hover:bg-white/[0.06] hover:border-turquoise/25 hover:shadow-lg hover:shadow-turquoise/10 hover:-translate-y-1;
   }
 }
 
 .masonry-grid {
-  column-gap: 1.5rem;
+  column-gap: 1.25rem;
   column-count: 1;
 }
 
@@ -52,7 +61,17 @@
 
 .masonry-item {
   break-inside: avoid;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .masonry-grid {
+    column-gap: 1.5rem;
+  }
+
+  .masonry-item {
+    margin-bottom: 1.5rem;
+  }
 }
 
 /* Accessibility Support */

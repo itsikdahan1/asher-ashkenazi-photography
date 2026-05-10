@@ -7,21 +7,21 @@ export default function GalleryTeaser() {
   const images = content.gallery.images.filter((image) => image.enabled && image.featured).slice(0, 6);
 
   return (
-    <section id="gallery" className="py-32 px-6 max-w-7xl mx-auto">
-      <div className="flex flex-col md:flex-row items-end justify-between mb-20 gap-8">
+    <section id="gallery" className="py-28 md:py-32 px-6 max-w-7xl mx-auto">
+      <div className="flex flex-col md:flex-row items-end justify-between mb-14 md:mb-20 gap-8">
         <div className="max-w-2xl">
           <h2 className="text-4xl md:text-7xl font-bold mb-6 tracking-tighter leading-tight">
             {content.gallery.title}{content.gallery.accent && <><br /><span className="text-turquoise">{content.gallery.accent}</span></>}
           </h2>
           {content.gallery.description && (
-            <p className="text-white/40 font-light text-xl">
+            <p className="text-cream/70 font-normal text-lg md:text-xl leading-relaxed">
               {content.gallery.description}
             </p>
           )}
         </div>
         <motion.a 
           href="/gallery"
-          className="group flex items-center gap-3 bg-white/5 border border-white/10 px-10 py-4 rounded-full text-white font-bold hover:bg-white/10 transition-all"
+          className="group flex w-full items-center justify-center gap-3 bg-white/[0.06] border border-white/15 px-10 py-4 rounded-full text-white font-bold hover:bg-white/[0.12] hover:border-white/20 transition-all sm:w-auto"
           whileHover={{ x: -10 }}
         >
           <ArrowLeft size={20} className="text-turquoise group-hover:-translate-x-1 transition-transform" />
@@ -42,7 +42,7 @@ export default function GalleryTeaser() {
                 ease: [0.215, 0.61, 0.355, 1] 
               }}
               viewport={{ once: true, margin: "-100px" }}
-              className="masonry-item relative group overflow-hidden rounded-[2rem] bg-white/5"
+              className="masonry-item relative group overflow-hidden rounded-[1.5rem] md:rounded-[2rem] bg-white/5 border border-white/[0.06] shadow-[0_24px_80px_-62px_rgba(0,0,0,0.95)]"
             >
               <img 
                 src={img.url} 
@@ -63,7 +63,7 @@ export default function GalleryTeaser() {
           ))}
         </div>
       ) : (
-        <div className="rounded-[2rem] border border-white/10 bg-white/[0.03] p-10 text-center text-cream/50">
+        <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-10 text-center text-cream/70 shadow-[0_24px_80px_-62px_rgba(0,0,0,0.95)]">
           {content.gallery.emptyMessage}
         </div>
       )}

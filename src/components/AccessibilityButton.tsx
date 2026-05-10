@@ -73,10 +73,10 @@ export default function AccessibilityButton() {
                 <button
                   key={item.key}
                   onClick={() => toggleSetting(item.key as keyof typeof settings)}
-                  className={`flex items-center gap-3 w-full p-3 rounded-xl transition-all text-sm font-medium ${
+                  className={`flex items-center gap-3 w-full p-3 rounded-xl transition-all text-sm font-semibold ${
                     settings[item.key as keyof typeof settings]
                       ? 'bg-turquoise text-charcoal'
-                      : 'bg-white/5 text-white/70 hover:bg-white/10'
+                      : 'bg-white/5 text-white/78 hover:bg-white/10 hover:text-white'
                   }`}
                 >
                   <span className="shrink-0">{item.icon}</span>
@@ -95,7 +95,7 @@ export default function AccessibilityButton() {
       <motion.button
         onClick={() => setIsOpen(!isOpen)}
         className={`w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center shadow-2xl transition-all relative z-10 ${
-          isOpen ? 'bg-charcoal text-turquoise' : 'bg-white/10 text-white backdrop-blur-xl border border-white/20'
+          isOpen ? 'bg-charcoal text-turquoise border border-white/15' : 'bg-white/10 text-white backdrop-blur-xl border border-white/20 hover:bg-white/15'
         }`}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}

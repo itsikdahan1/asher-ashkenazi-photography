@@ -11,11 +11,11 @@ export default function Testimonials() {
   }
 
   return (
-    <section className="py-24 px-6 relative overflow-hidden">
+    <section className="py-24 md:py-28 px-6 relative overflow-hidden">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[1px] bg-gradient-to-r from-transparent via-turquoise/20 to-transparent" />
       
       <div className="max-w-4xl mx-auto">
-        <div className="flex items-center justify-center gap-3 mb-16">
+        <div className="flex items-center justify-center gap-3 mb-12 md:mb-16">
           <MessageSquare className="text-turquoise" size={24} />
           <h2 className="text-3xl md:text-5xl font-bold tracking-tighter">{content.testimonials.title} <span className="text-turquoise">{content.testimonials.accent}</span></h2>
         </div>
@@ -31,19 +31,19 @@ export default function Testimonials() {
               className={`flex flex-col ${i % 2 === 0 ? 'items-start' : 'items-end'}`}
             >
               <div 
-                className={`max-w-[90%] md:max-w-[75%] p-5 rounded-3xl shadow-2xl relative border ${
+                className={`max-w-[96%] md:max-w-[75%] p-5 md:p-6 rounded-3xl shadow-[0_24px_80px_-58px_rgba(0,0,0,0.95)] relative border ${
                   i % 2 === 0 
-                    ? 'bg-white/[0.03] border-white/10 rounded-tr-none' 
-                    : 'bg-turquoise-deep/20 border-turquoise/20 rounded-tl-none'
+                    ? 'bg-white/[0.04] border-white/10 rounded-tr-none' 
+                    : 'bg-turquoise-deep/25 border-turquoise/25 rounded-tl-none'
                 }`}
               >
                 <div className="flex justify-between items-center gap-4 mb-3">
                   <span className={`text-xs font-bold ${i % 2 === 0 ? 'text-turquoise' : 'text-cream'}`}>{t.name}{t.role ? ` · ${t.role}` : ''}</span>
                 </div>
-                <p className="text-sm md:text-lg leading-relaxed mb-3 font-light text-cream/90">
+                <p className="text-sm md:text-lg leading-relaxed mb-3 font-normal text-cream/90">
                   {t.content}
                 </p>
-                <div className="flex items-center justify-end gap-1.5 opacity-40 text-[10px] md:text-xs">
+                <div className="flex items-center justify-end gap-1.5 opacity-55 text-[10px] md:text-xs">
                   <span>{t.time}</span>
                   <div className="flex -space-x-1">
                     <Check size={12} className="text-turquoise" />
@@ -57,7 +57,7 @@ export default function Testimonials() {
         
         {content.testimonials.footerNote && (
           <div className="text-center mt-16">
-            <p className="text-white/30 text-sm font-light italic">{content.testimonials.footerNote}</p>
+            <p className="text-cream/50 text-sm font-normal italic">{content.testimonials.footerNote}</p>
           </div>
         )}
       </div>

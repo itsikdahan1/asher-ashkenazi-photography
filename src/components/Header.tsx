@@ -14,19 +14,19 @@ export default function Header() {
   const headerBg = useTransform(
     scrollY,
     [0, 100],
-    ['rgba(10, 10, 10, 0)', 'rgba(10, 10, 10, 0.8)']
+    ['rgba(13, 14, 16, 0)', 'rgba(13, 14, 16, 0.9)']
   );
 
   const headerBorder = useTransform(
     scrollY,
     [0, 100],
-    ['border-transparent', 'border-white/10']
+    ['border-transparent', 'border-white/5']
   );
 
   const headerPadding = useTransform(
     scrollY,
     [0, 100],
-    ['2.5rem', '1.5rem']
+    ['2rem', '1rem']
   );
 
   const navItems = [
@@ -40,7 +40,7 @@ export default function Header() {
   return (
     <motion.header 
       style={{ backgroundColor: headerBg, paddingTop: headerPadding, paddingBottom: headerPadding }}
-      className="fixed top-0 left-0 right-0 z-50 transition-colors duration-300 border-b border-transparent backdrop-blur-sm"
+      className="fixed top-0 left-0 right-0 z-50 transition-colors duration-300 border-b backdrop-blur-md"
     >
       <nav className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         {/* WhatsApp CTA */}
@@ -49,11 +49,11 @@ export default function Header() {
             href={whatsappUrl}
             target="_blank"
             rel="noreferrer"
-            className="bg-turquoise text-charcoal px-6 py-2.5 rounded-full font-bold shadow-[0_4px_20px_rgba(42,193,188,0.3)] hover:brightness-110 transition-all text-sm hidden md:flex items-center gap-2"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            className="bg-white/[0.07] hover:bg-white/[0.12] text-cream px-6 py-3 rounded-full font-bold transition-all text-sm hidden md:flex items-center gap-2 border border-white/15 shadow-[0_12px_34px_-24px_rgba(0,0,0,0.9)]"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
           >
-            <MessageCircle size={18} fill="currentColor" />
+            <MessageCircle size={18} className="text-turquoise" />
             <span>בדיקה מהירה</span>
           </motion.a>
         ) : <div className="hidden md:block" />}
@@ -62,19 +62,19 @@ export default function Header() {
         <div className="flex flex-col items-center">
           <span className="text-2xl md:text-3xl font-bold tracking-tighter text-cream uppercase leading-none">{business.name}</span>
           <div className="flex items-center gap-2 mt-1">
-            <div className="h-[1px] w-4 bg-turquoise/50" />
-            <span className="text-[10px] uppercase tracking-[0.4em] text-turquoise font-medium opacity-80">{business.tagline}</span>
-            <div className="h-[1px] w-4 bg-turquoise/50" />
+            <div className="h-[1px] w-4 bg-turquoise/30" />
+            <span className="text-[10px] uppercase tracking-[0.4em] text-turquoise/90 font-medium">{business.tagline}</span>
+            <div className="h-[1px] w-4 bg-turquoise/30" />
           </div>
         </div>
 
         {/* Desktop Nav */}
-        <div className="hidden lg:flex items-center gap-10">
+        <div className="hidden lg:flex items-center gap-8">
           {navItems.map((item) => (
             <a
               key={item.name}
               href={item.href}
-              className="text-cream/60 hover:text-turquoise transition-all font-medium text-sm tracking-wide"
+              className="text-cream/78 hover:text-turquoise transition-all font-semibold text-sm tracking-wide"
             >
               {item.name}
             </a>
@@ -83,8 +83,9 @@ export default function Header() {
 
         {/* Mobile Toggle */}
         <button 
-          className="lg:hidden text-cream p-2"
+          className="lg:hidden text-cream p-3 rounded-full border border-white/10 bg-white/[0.04]"
           onClick={() => setIsOpen(!isOpen)}
+          aria-label="פתיחת תפריט ניווט"
         >
           {isOpen ? <X size={28} /> : <Menu size={28} />}
         </button>
@@ -95,7 +96,7 @@ export default function Header() {
         <motion.div 
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: 'auto' }}
-          className="lg:hidden bg-charcoal border-t border-white/10 px-6 py-8 overflow-hidden"
+          className="lg:hidden bg-charcoal/95 border-t border-white/10 px-6 py-8 overflow-hidden shadow-2xl"
         >
           <div className="flex flex-col gap-6">
             {navItems.map((item) => (
@@ -103,7 +104,7 @@ export default function Header() {
                 key={item.name}
                 href={item.href}
                 onClick={() => setIsOpen(false)}
-                className="text-xl font-medium text-cream/80 hover:text-turquoise transition-colors"
+                className="text-xl font-bold text-cream/85 hover:text-turquoise transition-colors"
               >
                 {item.name}
               </a>
@@ -111,7 +112,7 @@ export default function Header() {
             {whatsappUrl && (
               <a
                 href={whatsappUrl}
-                className="flex items-center justify-center gap-2 bg-turquoise text-charcoal py-4 rounded-xl font-bold"
+                className="flex items-center justify-center gap-2 bg-turquoise text-charcoal py-4 rounded-2xl font-black shadow-lg shadow-turquoise/10"
               >
                 <MessageCircle size={24} />
                 <span>דבר איתי בוואטסאפ</span>

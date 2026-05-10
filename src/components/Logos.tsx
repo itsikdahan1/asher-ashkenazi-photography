@@ -10,13 +10,13 @@ export default function Logos() {
   }
 
   return (
-    <section className="py-20 px-6 max-w-7xl mx-auto">
+    <section className="py-20 md:py-24 px-6 max-w-7xl mx-auto">
       <div className="mb-12 text-center">
         <h2 className="text-3xl md:text-5xl font-bold tracking-tighter">
           {content.logos.title} <span className="text-turquoise">{content.logos.accent}</span>
         </h2>
         {content.logos.subtitle && (
-          <p className="mt-4 text-white/40 font-light text-lg">{content.logos.subtitle}</p>
+          <p className="mt-4 text-cream/65 font-normal text-lg leading-relaxed">{content.logos.subtitle}</p>
         )}
       </div>
 
@@ -28,9 +28,9 @@ export default function Logos() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.06, duration: 0.5 }}
               viewport={{ once: true }}
-              className="flex h-28 items-center justify-center rounded-3xl border border-white/10 bg-white/[0.03] p-6 transition hover:border-turquoise/40 hover:bg-white/[0.05]"
+              className="flex h-28 items-center justify-center rounded-3xl border border-white/10 bg-white/[0.035] p-6 shadow-[0_18px_60px_-48px_rgba(0,0,0,0.9)] transition hover:border-turquoise/40 hover:bg-white/[0.06]"
             >
-              <img src={logo.imageUrl} alt={logo.name} className="max-h-full max-w-full object-contain opacity-80" loading="lazy" />
+              <img src={logo.imageUrl} alt={logo.name} className="max-h-full max-w-full object-contain opacity-85" loading="lazy" />
             </motion.div>
           );
 
