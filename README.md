@@ -1,20 +1,23 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# אשר אשכנזי צילום
 
-# Run and deploy your AI Studio app
+אתר React/Vite בעברית עם מערכת ניהול תוכן פנימית בנתיב `/admin`.
 
-This contains everything you need to run your app locally.
+## עקרונות תוכן
 
-View your app in AI Studio: https://ai.studio/apps/147952cc-da05-4a38-9b63-eeeaaaed7b43
+- האתר הציבורי לא מציג תמונות, המלצות, לוגואים, שירותים או חבילות דמו.
+- אזור שלא הוזן בו תוכן אמיתי באדמין מוסתר או מציג מצב ריק נקי.
+- כל התוכן נשמר מקומית בדפדפן ויכול להסתנכרן מול Google Apps Script אם מגדירים endpoint.
+- טוקן הניהול מוזן רק בתוך `/admin` ואינו נשמר בקוד המקור.
 
-## Run Locally
+## הרצה מקומית
 
-**Prerequisites:**  Node.js
-
-
-1. Install dependencies:
+1. התקנת חבילות:
    `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
+2. אופציונלי: הגדרת `VITE_CONTENT_API_URL` בקובץ `.env.local` לפי `.env.example`.
+3. הרצה:
    `npm run dev`
+
+## בדיקות
+
+- TypeScript: `npm run lint`
+- Build: `npm run build`

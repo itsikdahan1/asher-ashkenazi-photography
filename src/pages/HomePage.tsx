@@ -6,6 +6,7 @@ import Packaging from '../components/Packaging';
 import Packages from '../components/Packages';
 import GalleryTeaser from '../components/GalleryTeaser';
 import Testimonials from '../components/Testimonials';
+import Logos from '../components/Logos';
 import Footer from '../components/Footer';
 
 export default function HomePage() {
@@ -20,6 +21,7 @@ export default function HomePage() {
       <Packaging />
       <GalleryTeaser />
       <Testimonials />
+      <Logos />
       <Packages />
       <Footer />
     </main>

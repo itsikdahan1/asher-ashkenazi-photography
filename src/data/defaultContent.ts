@@ -1,0 +1,73 @@
+import type { SiteContent } from '../types';
+
+export const DEFAULT_CONTENT: SiteContent = {
+  business: {
+    name: 'אשר אשכנזי',
+    tagline: 'צילום פרימיום',
+    description: '',
+    whatsappNumber: '972528735900',
+    email: 'Ashkenazi.photo@gmail.com',
+    instagramUrl: '',
+    facebookUrl: '',
+    logoUrl: '',
+    privacyPolicyUrl: '',
+    termsUrl: '',
+  },
+  hero: {
+    eyebrow: 'צילום אירועים ומגנטים',
+    titleLine: 'אשר אשכנזי',
+    titleAccent: 'צילום.',
+    subtitle: '',
+    primaryCtaLabel: 'בדיקת זמינות',
+    secondaryCtaLabel: 'צפייה בגלריה',
+    backgroundImageUrl: '',
+  },
+  features: {
+    title: 'למה לבחור בי',
+    accent: 'בצילום.',
+    subtitle: '',
+    items: [],
+  },
+  services: {
+    title: 'השירותים',
+    accent: 'שלי.',
+    subtitle: '',
+    items: [],
+  },
+  packaging: {
+    enabled: false,
+    eyebrow: '',
+    title: '',
+    accent: '',
+    description: '',
+    bullets: [],
+    images: [],
+    badgeTitle: '',
+    badgeText: '',
+  },
+  gallery: {
+    title: 'הגלריה שלי',
+    accent: '',
+    description: 'כאן יוצגו רק עבודות אמיתיות לאחר העלאה ואישור דרך מערכת הניהול.',
+    emptyMessage: 'הגלריה עדיין ריקה מתוכן אמיתי. לאחר העלאת עבודות מאושרות באדמין הן יוצגו כאן.',
+    images: [],
+  },
+  logos: {
+    title: 'לוגואים',
+    accent: 'ושיתופי פעולה.',
+    subtitle: '',
+    items: [],
+  },
+  testimonials: {
+    title: 'מה הם',
+    accent: 'אומרים?',
+    footerNote: '',
+    items: [],
+  },
+  packages: {
+    title: 'בחירת המסלול',
+    accent: 'שלכם.',
+    description: '',
+    items: [],
+  },
+};

@@ -1,9 +1,14 @@
 import { motion, useScroll, useTransform } from 'motion/react';
 import { Menu, X, MessageCircle } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { useContent } from '../contexts/ContentContext';
+import { getWhatsappUrl } from '../utils/contentHelpers';
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const { content } = useContent();
+  const { business } = content;
+  const whatsappUrl = getWhatsappUrl(business.whatsappNumber);
   const { scrollY } = useScroll();
   
   const headerBg = useTransform(
@@ -39,24 +44,26 @@ export default function Header() {
     >
       <nav className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         {/* WhatsApp CTA */}
-        <motion.a
-          href="https://wa.me/972528735900"
-          target="_blank"
-          rel="noreferrer"
-          className="bg-turquoise text-charcoal px-6 py-2.5 rounded-full font-bold shadow-[0_4px_20px_rgba(42,193,188,0.3)] hover:brightness-110 transition-all text-sm hidden md:flex items-center gap-2"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <MessageCircle size={18} fill="currentColor" />
-          <span>בדיקה מהירה</span>
-        </motion.a>
+        {whatsappUrl ? (
+          <motion.a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="bg-turquoise text-charcoal px-6 py-2.5 rounded-full font-bold shadow-[0_4px_20px_rgba(42,193,188,0.3)] hover:brightness-110 transition-all text-sm hidden md:flex items-center gap-2"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <MessageCircle size={18} fill="currentColor" />
+            <span>בדיקה מהירה</span>
+          </motion.a>
+        ) : <div className="hidden md:block" />}
 
         {/* Logo Section */}
         <div className="flex flex-col items-center">
-          <span className="text-2xl md:text-3xl font-bold tracking-tighter text-cream uppercase leading-none">אשר אשכנזי</span>
+          <span className="text-2xl md:text-3xl font-bold tracking-tighter text-cream uppercase leading-none">{business.name}</span>
           <div className="flex items-center gap-2 mt-1">
             <div className="h-[1px] w-4 bg-turquoise/50" />
-            <span className="text-[10px] uppercase tracking-[0.4em] text-turquoise font-medium opacity-80">צילום פרימיום</span>
+            <span className="text-[10px] uppercase tracking-[0.4em] text-turquoise font-medium opacity-80">{business.tagline}</span>
             <div className="h-[1px] w-4 bg-turquoise/50" />
           </div>
         </div>
@@ -101,13 +108,15 @@ export default function Header() {
                 {item.name}
               </a>
             ))}
-            <a
-              href="https://wa.me/972528735900"
-              className="flex items-center justify-center gap-2 bg-turquoise text-charcoal py-4 rounded-xl font-bold"
-            >
-              <MessageCircle size={24} />
-              <span>דבר איתי בוואטסאפ</span>
-            </a>
+            {whatsappUrl && (
+              <a
+                href={whatsappUrl}
+                className="flex items-center justify-center gap-2 bg-turquoise text-charcoal py-4 rounded-xl font-bold"
+              >
+                <MessageCircle size={24} />
+                <span>דבר איתי בוואטסאפ</span>
+              </a>
+            )}
           </div>
         </motion.div>
       )}

@@ -1,10 +1,19 @@
 import { motion } from 'motion/react';
 import { MessageCircle } from 'lucide-react';
+import { useContent } from '../contexts/ContentContext';
+import { getWhatsappUrl } from '../utils/contentHelpers';
 
 export default function WhatsAppButton() {
+  const { content } = useContent();
+  const whatsappUrl = getWhatsappUrl(content.business.whatsappNumber, 'האתר של אשר אשכנזי צילום');
+
+  if (!whatsappUrl) {
+    return null;
+  }
+
   return (
     <motion.a
-      href="https://wa.me/972528735900?text=%D7%94%D7%90%D7%AA%D7%A8%20%D7%A9%D7%9C%20%D7%90%D7%A9%D7%9B%D7%A0%D7%96%D7%99%20%D7%A6%D7%99%D7%9C%D7%95%D7%9D"
+      href={whatsappUrl}
       target="_blank"
       rel="noreferrer"
       className="fixed bottom-6 right-6 z-[100] flex items-center group flex-row"
