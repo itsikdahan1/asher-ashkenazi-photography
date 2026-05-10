@@ -1,4 +1,4 @@
-import { useEffect, useState, type Key, type ReactNode } from 'react';
+import { useEffect, useState, type FormEvent, type Key, type ReactNode } from 'react';
 import { ArrowRight, Check, Download, Plus, RefreshCw, Save, Trash2, Upload } from 'lucide-react';
 import { DEFAULT_CONTENT } from '../data/defaultContent';
 import { useContent } from '../contexts/ContentContext';
@@ -33,6 +33,9 @@ const iconOptions: Array<{ value: IconKey; label: string }> = [
 const createId = (prefix: string) => `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
 
 const splitLines = (value: string) => value.split('\n').map((item) => item.trim()).filter(Boolean);
+
+const adminAccessToken = import.meta.env.VITE_ADMIN_ACCESS_TOKEN?.trim() ?? '';
+const adminSessionKey = 'asher_admin_access_granted_v1';
 
 const Field = ({ label, value, onChange, placeholder = '', type = 'text' }: { label: string; value: string; onChange: (value: string) => void; placeholder?: string; type?: string }) => (
   <label className="block">
@@ -83,6 +86,11 @@ export default function AdminPage() {
   const [status, setStatus] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [settingsDraft, setSettingsDraft] = useState(settings);
+  const [accessToken, setAccessToken] = useState('');
+  const [accessError, setAccessError] = useState('');
+  const [isAccessGranted, setIsAccessGranted] = useState(() => {
+    return !adminAccessToken || window.sessionStorage.getItem(adminSessionKey) === 'true';
+  });
 
   useEffect(() => {
     setDraft(content);
@@ -96,13 +104,25 @@ export default function AdminPage() {
     setDraft((current) => updater(current));
   };
 
+  const handleAccessSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (accessToken.trim() !== adminAccessToken) {
+      setAccessError('טוקן כניסה שגוי');
+      return;
+    }
+
+    window.sessionStorage.setItem(adminSessionKey, 'true');
+    setIsAccessGranted(true);
+    setAccessError('');
+  };
+
   const handleSave = async () => {
     setIsSaving(true);
     setStatus('');
 
     try {
       await saveContent(draft);
-      setStatus(settings.apiUrl ? 'נשמר מקומית ובגוגל בהצלחה' : 'נשמר מקומית בדפדפן. לחיבור גוגל עברו ללשונית גוגל.');
+      setStatus(settings.apiUrl ? 'נשמר בדאטה המרכזי של גוגל וגם בעותק מקומי בדפדפן.' : 'נשמר רק בדפדפן הזה. כדי לפרסם לכל הגולשים חייבים להגדיר חיבור Google Apps Script בלשונית גוגל.');
     } catch (saveError) {
       setStatus(saveError instanceof Error ? saveError.message : 'השמירה נכשלה');
     } finally {
@@ -136,6 +156,27 @@ export default function AdminPage() {
   };
 
   const enabledGallery = draft.gallery.images.filter((item) => item.enabled);
+
+  if (!isAccessGranted) {
+    return (
+      <main className="min-h-screen bg-charcoal px-4 py-8 text-cream" dir="rtl">
+        <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-xl items-center">
+          <form onSubmit={handleAccessSubmit} className="w-full rounded-[2rem] border border-white/10 bg-white/[0.03] p-8 shadow-2xl">
+            <a href="/" className="mb-6 inline-flex items-center gap-2 text-sm font-bold text-turquoise">
+              <ArrowRight size={16} /> חזרה לאתר
+            </a>
+            <h1 className="mb-3 text-4xl font-black tracking-tight">כניסה לניהול</h1>
+            <p className="mb-8 text-cream/55">יש להזין טוקן כניסה כדי לערוך את תוכן האתר.</p>
+            <Field label="טוקן כניסה" value={accessToken} onChange={setAccessToken} type="password" />
+            {accessError && <p className="mt-4 rounded-2xl border border-red-400/30 bg-red-500/10 p-4 text-sm font-bold text-red-200">{accessError}</p>}
+            <button type="submit" className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-turquoise px-6 py-4 font-black text-charcoal transition hover:brightness-110">
+              כניסה לאדמין
+            </button>
+          </form>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-charcoal px-4 py-8 text-cream" dir="rtl">
