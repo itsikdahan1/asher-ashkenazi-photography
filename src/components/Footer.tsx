@@ -75,9 +75,9 @@ export default function Footer() {
             
             {business.email && <div className="flex flex-col justify-between p-8 rounded-[2rem] bg-white/[0.03] border border-white/5 h-[200px]">
                <Mail size={32} className="text-turquoise" />
-               <div>
+               <div className="overflow-hidden">
                  <span className="text-xs font-black uppercase tracking-widest block mb-1 text-white/40">כתובת מייל</span>
-                 <span className="text-2xl font-bold text-white">{business.email}</span>
+                 <span className="text-xl lg:text-2xl font-bold text-white truncate block">{business.email}</span>
                </div>
             </div>}
           </div>
