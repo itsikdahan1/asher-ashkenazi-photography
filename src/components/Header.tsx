@@ -93,14 +93,19 @@ export default function Header() {
         ) : <div className="hidden md:block" />}
 
         {/* Logo Section */}
-        <div className="flex flex-col items-center cursor-pointer select-none" onClick={handleLogoClick}>
+        <motion.div
+          className="flex flex-col items-center cursor-pointer select-none transition-opacity hover:opacity-80"
+          onClick={handleLogoClick}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+        >
           <span className="text-2xl md:text-3xl font-bold tracking-tighter text-cream uppercase leading-none">{business.name}</span>
           <div className="flex items-center gap-2 mt-1">
             <div className="h-[1px] w-4 bg-turquoise/30" />
             <span className="text-[10px] uppercase tracking-[0.4em] text-turquoise/90 font-medium">{business.tagline}</span>
             <div className="h-[1px] w-4 bg-turquoise/30" />
           </div>
-        </div>
+        </motion.div>
 
         {/* Desktop Nav */}
         <div className="hidden lg:flex items-center gap-8">
