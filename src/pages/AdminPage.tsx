@@ -3,6 +3,7 @@ import { ArrowRight, Download, LogOut, Plus, RefreshCw, Save, Trash2, Upload } f
 import { DEFAULT_CONTENT } from '../data/defaultContent';
 import { useContent } from '../contexts/ContentContext';
 import { getFirebaseAuth, isAllowedAdminEmail, isFirebaseConfigured, signInWithGoogle, signOutAdmin } from '../services/firebaseAuth';
+import { uploadSiteImage } from '../services/mediaUpload';
 import type { FeatureItem, GalleryImage, IconKey, LogoItem, PackageItem, ServiceItem, SiteContent, TestimonialItem } from '../types';
 import { onAuthStateChanged, type User } from 'firebase/auth';
 
@@ -61,6 +62,24 @@ const TextArea = ({ label, value, onChange, rows = 4, placeholder = '' }: { labe
   </label>
 );
 
+const ImageField = ({ label, value, onChange, onUpload, uploadLabel = 'העלה תמונה', isUploading = false }: { label: string; value: string; onChange: (value: string) => void; onUpload: (file: File) => void; uploadLabel?: string; isUploading?: boolean }) => (
+  <div className="space-y-3">
+    <Field label={label} value={value} onChange={onChange} />
+    <label className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-turquoise/30 bg-turquoise/10 px-5 py-3 text-sm font-black text-turquoise transition hover:bg-turquoise/15">
+      <Upload size={16} /> {isUploading ? 'מעלה...' : uploadLabel}
+      <input type="file" accept="image/*" className="hidden" disabled={isUploading} onChange={(event) => {
+        const file = event.target.files?.[0];
+        event.target.value = '';
+
+        if (file) {
+          onUpload(file);
+        }
+      }} />
+    </label>
+    {value && <img src={value} alt="" className="h-28 w-full rounded-2xl object-cover" />}
+  </div>
+);
+
 const Toggle = ({ label, checked, onChange }: { label: string; checked: boolean; onChange: (value: boolean) => void }) => (
   <button
     type="button"
@@ -77,12 +96,15 @@ const Card = ({ children }: { children: ReactNode; key?: Key }) => (
   </div>
 );
 
+type UploadImageHandler = (file: File, folder: string, onUrl: (url: string) => void) => Promise<void>;
+
 export default function AdminPage() {
   const { content, saveContent, reloadContent, isRemoteConfigured, source, error } = useContent();
   const [draft, setDraft] = useState<SiteContent>(content);
   const [activeTab, setActiveTab] = useState<TabId>('business');
   const [status, setStatus] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [uploadingField, setUploadingField] = useState('');
   const [accessError, setAccessError] = useState('');
   const [adminUser, setAdminUser] = useState<User | null>(null);
   const [isAuthLoading, setIsAuthLoading] = useState(isFirebaseConfigured);
@@ -167,6 +189,22 @@ export default function AdminPage() {
     const text = await file.text();
     setDraft(JSON.parse(text) as SiteContent);
     setStatus('הקובץ נטען לטיוטה. יש ללחוץ שמירה כדי לפרסם.');
+  };
+
+  const handleImageUpload = async (file: File, folder: string, onUrl: (url: string) => void) => {
+    const uploadKey = `${folder}-${file.name}`;
+    setUploadingField(uploadKey);
+    setStatus('מעלה תמונה ל-Firebase Storage...');
+
+    try {
+      const url = await uploadSiteImage(file, folder);
+      onUrl(url);
+      setStatus('התמונה עלתה ונשמרה בטיוטה. יש ללחוץ שמור הכל כדי לפרסם את התוכן.');
+    } catch (uploadError) {
+      setStatus(uploadError instanceof Error ? uploadError.message : 'העלאת התמונה נכשלה');
+    } finally {
+      setUploadingField('');
+    }
   };
 
   const enabledGallery = draft.gallery.images.filter((item) => item.enabled);
@@ -276,7 +314,7 @@ export default function AdminPage() {
             <Field label="אימייל" value={draft.business.email} onChange={(value) => patch((current) => ({ ...current, business: { ...current.business, email: value } }))} />
             <Field label="קישור אינסטגרם" value={draft.business.instagramUrl} onChange={(value) => patch((current) => ({ ...current, business: { ...current.business, instagramUrl: value } }))} />
             <Field label="קישור פייסבוק" value={draft.business.facebookUrl} onChange={(value) => patch((current) => ({ ...current, business: { ...current.business, facebookUrl: value } }))} />
-            <Field label="קישור לוגו" value={draft.business.logoUrl} onChange={(value) => patch((current) => ({ ...current, business: { ...current.business, logoUrl: value } }))} />
+            <ImageField label="לוגו" value={draft.business.logoUrl} onChange={(value) => patch((current) => ({ ...current, business: { ...current.business, logoUrl: value } }))} onUpload={(file) => void handleImageUpload(file, 'business', (url) => patch((current) => ({ ...current, business: { ...current.business, logoUrl: url } })))} isUploading={uploadingField.startsWith('business-')} />
             <Field label="מדיניות פרטיות" value={draft.business.privacyPolicyUrl} onChange={(value) => patch((current) => ({ ...current, business: { ...current.business, privacyPolicyUrl: value } }))} />
             <Field label="תקנון אתר" value={draft.business.termsUrl} onChange={(value) => patch((current) => ({ ...current, business: { ...current.business, termsUrl: value } }))} />
             <TextArea label="תיאור עסק" value={draft.business.description} onChange={(value) => patch((current) => ({ ...current, business: { ...current.business, description: value } }))} />
@@ -288,7 +326,7 @@ export default function AdminPage() {
             <Field label="טקסט עליון קטן" value={draft.hero.eyebrow} onChange={(value) => patch((current) => ({ ...current, hero: { ...current.hero, eyebrow: value } }))} />
             <Field label="כותרת ראשית" value={draft.hero.titleLine} onChange={(value) => patch((current) => ({ ...current, hero: { ...current.hero, titleLine: value } }))} />
             <Field label="מילת הדגשה" value={draft.hero.titleAccent} onChange={(value) => patch((current) => ({ ...current, hero: { ...current.hero, titleAccent: value } }))} />
-            <Field label="תמונת רקע אמיתית" value={draft.hero.backgroundImageUrl} onChange={(value) => patch((current) => ({ ...current, hero: { ...current.hero, backgroundImageUrl: value } }))} />
+            <ImageField label="תמונת רקע" value={draft.hero.backgroundImageUrl} onChange={(value) => patch((current) => ({ ...current, hero: { ...current.hero, backgroundImageUrl: value } }))} onUpload={(file) => void handleImageUpload(file, 'hero', (url) => patch((current) => ({ ...current, hero: { ...current.hero, backgroundImageUrl: url } })))} isUploading={uploadingField.startsWith('hero-')} />
             <Field label="כפתור ראשי" value={draft.hero.primaryCtaLabel} onChange={(value) => patch((current) => ({ ...current, hero: { ...current.hero, primaryCtaLabel: value } }))} />
             <Field label="כפתור גלריה" value={draft.hero.secondaryCtaLabel} onChange={(value) => patch((current) => ({ ...current, hero: { ...current.hero, secondaryCtaLabel: value } }))} />
             <TextArea label="תיאור קצר" value={draft.hero.subtitle} onChange={(value) => patch((current) => ({ ...current, hero: { ...current.hero, subtitle: value } }))} rows={5} />
@@ -300,15 +338,15 @@ export default function AdminPage() {
         )}
 
         {activeTab === 'services' && (
-          <EditableServices draft={draft} patch={patch} />
+          <EditableServices draft={draft} patch={patch} uploadImage={handleImageUpload} uploadingField={uploadingField} />
         )}
 
         {activeTab === 'packaging' && (
-          <EditablePackaging draft={draft} patch={patch} />
+          <EditablePackaging draft={draft} patch={patch} uploadImage={handleImageUpload} uploadingField={uploadingField} />
         )}
 
         {activeTab === 'gallery' && (
-          <EditableGallery draft={draft} patch={patch} />
+          <EditableGallery draft={draft} patch={patch} uploadImage={handleImageUpload} uploadingField={uploadingField} />
         )}
 
         {activeTab === 'testimonials' && (
@@ -316,7 +354,7 @@ export default function AdminPage() {
         )}
 
         {activeTab === 'logos' && (
-          <EditableLogos draft={draft} patch={patch} />
+          <EditableLogos draft={draft} patch={patch} uploadImage={handleImageUpload} uploadingField={uploadingField} />
         )}
 
         {activeTab === 'packages' && (
@@ -399,7 +437,7 @@ function EditableFeatures({ draft, patch }: { draft: SiteContent; patch: (update
   );
 }
 
-function EditableServices({ draft, patch }: { draft: SiteContent; patch: (updater: (current: SiteContent) => SiteContent) => void }) {
+function EditableServices({ draft, patch, uploadImage, uploadingField }: { draft: SiteContent; patch: (updater: (current: SiteContent) => SiteContent) => void; uploadImage: UploadImageHandler; uploadingField: string }) {
   const addItem = () => patch((current) => ({
     ...current,
     services: {
@@ -436,7 +474,7 @@ function EditableServices({ draft, patch }: { draft: SiteContent; patch: (update
             <div className="grid gap-4">
               <Field label="שם השירות" value={item.title} onChange={(value) => updateItem(item.id, { title: value })} />
               <Field label="שורת משנה" value={item.subtitle} onChange={(value) => updateItem(item.id, { subtitle: value })} />
-              <Field label="קישור תמונה אמיתית" value={item.imageUrl} onChange={(value) => updateItem(item.id, { imageUrl: value })} />
+              <ImageField label="תמונה" value={item.imageUrl} onChange={(value) => updateItem(item.id, { imageUrl: value })} onUpload={(file) => void uploadImage(file, `services/${item.id}`, (url) => updateItem(item.id, { imageUrl: url }))} isUploading={uploadingField.startsWith(`services/${item.id}-`)} />
               <TextArea label="תיאור" value={item.description} onChange={(value) => updateItem(item.id, { description: value })} />
               <select value={item.icon} onChange={(event) => updateItem(item.id, { icon: event.target.value as IconKey })} className="rounded-2xl border border-white/10 bg-charcoal px-4 py-3 text-cream">
                 {iconOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
@@ -449,7 +487,12 @@ function EditableServices({ draft, patch }: { draft: SiteContent; patch: (update
   );
 }
 
-function EditablePackaging({ draft, patch }: { draft: SiteContent; patch: (updater: (current: SiteContent) => SiteContent) => void }) {
+function EditablePackaging({ draft, patch, uploadImage, uploadingField }: { draft: SiteContent; patch: (updater: (current: SiteContent) => SiteContent) => void; uploadImage: UploadImageHandler; uploadingField: string }) {
+  const addImage = (url: string) => patch((current) => ({
+    ...current,
+    packaging: { ...current.packaging, images: [...current.packaging.images, url] },
+  }));
+
   return (
     <section className="space-y-6">
       <Card>
@@ -469,13 +512,24 @@ function EditablePackaging({ draft, patch }: { draft: SiteContent; patch: (updat
           <TextArea label="תיאור" value={draft.packaging.description} onChange={(value) => patch((current) => ({ ...current, packaging: { ...current.packaging, description: value } }))} rows={5} />
           <TextArea label="נקודות - שורה לכל סעיף" value={draft.packaging.bullets.join('\n')} onChange={(value) => patch((current) => ({ ...current, packaging: { ...current.packaging, bullets: splitLines(value) } }))} rows={6} />
           <TextArea label="תמונות אמיתיות - קישור בכל שורה" value={draft.packaging.images.join('\n')} onChange={(value) => patch((current) => ({ ...current, packaging: { ...current.packaging, images: splitLines(value) } }))} rows={6} />
+          <label className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-turquoise/30 bg-turquoise/10 px-5 py-3 text-sm font-black text-turquoise transition hover:bg-turquoise/15">
+            <Upload size={16} /> {uploadingField.startsWith('packaging-') ? 'מעלה...' : 'העלה תמונת אריזה'}
+            <input type="file" accept="image/*" className="hidden" disabled={uploadingField.startsWith('packaging-')} onChange={(event) => {
+              const file = event.target.files?.[0];
+              event.target.value = '';
+
+              if (file) {
+                void uploadImage(file, 'packaging', addImage);
+              }
+            }} />
+          </label>
         </div>
       </Card>
     </section>
   );
 }
 
-function EditableGallery({ draft, patch }: { draft: SiteContent; patch: (updater: (current: SiteContent) => SiteContent) => void }) {
+function EditableGallery({ draft, patch, uploadImage, uploadingField }: { draft: SiteContent; patch: (updater: (current: SiteContent) => SiteContent) => void; uploadImage: UploadImageHandler; uploadingField: string }) {
   const addItem = () => patch((current) => ({
     ...current,
     gallery: {
@@ -514,7 +568,7 @@ function EditableGallery({ draft, patch }: { draft: SiteContent; patch: (updater
               <button onClick={() => removeItem(item.id)} className="text-red-300"><Trash2 size={18} /></button>
             </div>
             <div className="grid gap-4">
-              <Field label="קישור תמונה" value={item.url} onChange={(value) => updateItem(item.id, { url: value })} />
+              <ImageField label="תמונה" value={item.url} onChange={(value) => updateItem(item.id, { url: value })} onUpload={(file) => void uploadImage(file, `gallery/${item.id}`, (url) => updateItem(item.id, { url }))} isUploading={uploadingField.startsWith(`gallery/${item.id}-`)} />
               <Field label="קטגוריה" value={item.category} onChange={(value) => updateItem(item.id, { category: value })} />
               <Field label="כותרת" value={item.title} onChange={(value) => updateItem(item.id, { title: value })} />
               <Field label="טקסט נגישות" value={item.alt} onChange={(value) => updateItem(item.id, { alt: value })} />
@@ -573,7 +627,7 @@ function EditableTestimonials({ draft, patch }: { draft: SiteContent; patch: (up
   );
 }
 
-function EditableLogos({ draft, patch }: { draft: SiteContent; patch: (updater: (current: SiteContent) => SiteContent) => void }) {
+function EditableLogos({ draft, patch, uploadImage, uploadingField }: { draft: SiteContent; patch: (updater: (current: SiteContent) => SiteContent) => void; uploadImage: UploadImageHandler; uploadingField: string }) {
   const addItem = () => patch((current) => ({
     ...current,
     logos: {
@@ -609,7 +663,7 @@ function EditableLogos({ draft, patch }: { draft: SiteContent; patch: (updater: 
             </div>
             <div className="grid gap-4">
               <Field label="שם" value={item.name} onChange={(value) => updateItem(item.id, { name: value })} />
-              <Field label="קישור תמונת לוגו" value={item.imageUrl} onChange={(value) => updateItem(item.id, { imageUrl: value })} />
+              <ImageField label="תמונת לוגו" value={item.imageUrl} onChange={(value) => updateItem(item.id, { imageUrl: value })} onUpload={(file) => void uploadImage(file, `logos/${item.id}`, (url) => updateItem(item.id, { imageUrl: url }))} isUploading={uploadingField.startsWith(`logos/${item.id}-`)} />
               <Field label="קישור יעד" value={item.url} onChange={(value) => updateItem(item.id, { url: value })} />
             </div>
           </Card>
