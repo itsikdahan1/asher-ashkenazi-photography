@@ -146,20 +146,14 @@ export interface SiteContent {
   packages: PackagesContent;
 }
 
-export interface ContentSyncSettings {
-  apiUrl: string;
-  adminToken: string;
-}
-
 export interface ContentState {
   content: SiteContent;
   isLoading: boolean;
   error: string;
   source: 'default' | 'local' | 'remote';
-  settings: ContentSyncSettings;
+  isRemoteConfigured: boolean;
   setContent: (content: SiteContent) => void;
   updateContent: (updater: (content: SiteContent) => SiteContent) => void;
   saveContent: (content: SiteContent) => Promise<void>;
-  saveSettings: (settings: ContentSyncSettings) => void;
   reloadContent: () => Promise<void>;
 }

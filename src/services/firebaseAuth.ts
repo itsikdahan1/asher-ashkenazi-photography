@@ -14,13 +14,23 @@ export const isFirebaseConfigured = Object.values(firebaseConfig).every((value) 
 
 let app: FirebaseApp | null = null;
 
-export const getFirebaseAuth = () => {
+export const getFirebaseApp = () => {
   if (!isFirebaseConfigured) {
     return null;
   }
 
   app ??= initializeApp(firebaseConfig);
-  return getAuth(app);
+  return app;
+};
+
+export const getFirebaseAuth = () => {
+  const firebaseApp = getFirebaseApp();
+
+  if (!firebaseApp) {
+    return null;
+  }
+
+  return getAuth(firebaseApp);
 };
 
 export const isAllowedAdminEmail = (email: string | null | undefined) => {

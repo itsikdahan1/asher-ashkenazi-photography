@@ -1,11 +1,18 @@
 ---
-title: Google Apps Script content backend
+title: Deprecated Google Apps Script content backend
 ---
 
-# חיבור תוכן אמיתי ל-Google Sheets
+# מסמך ישן - לא בשימוש
 
-האדמין באתר יודע לשמור ולקרוא תוכן מ-Google Apps Script דרך `VITE_CONTENT_API_URL`.
-הסקריפט הבא שומר את כל תוכן האתר בשורה אחת בתוך Google Sheet.
+האתר עבר לשמירת תוכן דרך Firebase Firestore.
+אין צורך ב-Google Apps Script, Google Sheets, כתובת API או טוקן מנהל נפרד.
+
+ההוראות העדכניות נמצאות ב-`docs/firestore-content.md`.
+
+<!--
+התיעוד הישן נשמר זמנית רק כרפרנס היסטורי.
+
+# חיבור תוכן אמיתי ל-Google Sheets
 
 ## שלבים
 
@@ -90,3 +97,4 @@ function doPost(event) {
 - אל תשתמש בטוקן קצר.
 - הכניסה ל-`/admin` מתבצעת עם Google דרך Firebase Authentication ומוגבלת לכתובות המייל המורשות בקוד.
 - להגנה חזקה יותר, מומלץ להוסיף גם Deployment Protection ב-Vercel או בדיקת הרשאה בצד שרת אם מוסיפים backend בעתיד.
+-->

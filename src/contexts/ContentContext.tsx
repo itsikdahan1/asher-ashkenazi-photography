@@ -3,19 +3,17 @@ import { DEFAULT_CONTENT } from '../data/defaultContent';
 import {
   fetchRemoteContent,
   getStoredContent,
-  getStoredSettings,
+  isRemoteContentConfigured,
   normalizeContent,
   saveRemoteContent,
   storeContent,
-  storeSettings,
 } from '../services/contentService';
-import type { ContentState, ContentSyncSettings, SiteContent } from '../types';
+import type { ContentState, SiteContent } from '../types';
 
 const ContentContext = createContext<ContentState | null>(null);
 
 export function ContentProvider({ children }: { children: ReactNode }) {
   const [content, setContentState] = useState<SiteContent>(DEFAULT_CONTENT);
-  const [settings, setSettings] = useState<ContentSyncSettings>({ apiUrl: '', adminToken: '' });
   const [source, setSource] = useState<ContentState['source']>('default');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
@@ -32,11 +30,8 @@ export function ContentProvider({ children }: { children: ReactNode }) {
     setIsLoading(true);
     setError('');
 
-    const storedSettings = getStoredSettings();
-    setSettings(storedSettings);
-
     try {
-      const remoteContent = await fetchRemoteContent(storedSettings.apiUrl);
+      const remoteContent = await fetchRemoteContent();
 
       if (remoteContent) {
         setContentState(remoteContent);
@@ -66,18 +61,8 @@ export function ContentProvider({ children }: { children: ReactNode }) {
     const normalizedContent = normalizeContent(nextContent);
     setContentState(normalizedContent);
     storeContent(normalizedContent);
-    await saveRemoteContent(settings, normalizedContent);
-    setSource(settings.apiUrl.trim() ? 'remote' : 'local');
-  }, [settings]);
-
-  const saveSettings = useCallback((nextSettings: ContentSyncSettings) => {
-    const cleanSettings = {
-      apiUrl: nextSettings.apiUrl.trim(),
-      adminToken: nextSettings.adminToken.trim(),
-    };
-
-    setSettings(cleanSettings);
-    storeSettings(cleanSettings);
+    const isSavedRemotely = await saveRemoteContent(normalizedContent);
+    setSource(isSavedRemotely ? 'remote' : 'local');
   }, []);
 
   useEffect(() => {
@@ -89,13 +74,12 @@ export function ContentProvider({ children }: { children: ReactNode }) {
     isLoading,
     error,
     source,
-    settings,
+    isRemoteConfigured: isRemoteContentConfigured(),
     setContent,
     updateContent,
     saveContent,
-    saveSettings,
     reloadContent: loadContent,
-  }), [content, error, isLoading, loadContent, saveContent, saveSettings, setContent, settings, source, updateContent]);
+  }), [content, error, isLoading, loadContent, saveContent, setContent, source, updateContent]);
 
   return (
     <ContentContext.Provider value={value}>

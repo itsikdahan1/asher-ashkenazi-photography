@@ -1,15 +1,13 @@
 import { DEFAULT_CONTENT } from '../data/defaultContent';
-import type { ContentSyncSettings, SiteContent } from '../types';
+import { doc, getDoc, getFirestore, setDoc, serverTimestamp } from 'firebase/firestore';
+import { getFirebaseApp } from './firebaseAuth';
+import type { SiteContent } from '../types';
 
 const CONTENT_STORAGE_KEY = 'asher_site_content_v1';
 const CONTENT_VERSION_KEY = 'asher_site_content_version';
 const CONTENT_VERSION = '2026-05-12-brand-content';
-const SETTINGS_STORAGE_KEY = 'asher_content_settings_v1';
-
-const initialSettings: ContentSyncSettings = {
-  apiUrl: import.meta.env.VITE_CONTENT_API_URL ?? '',
-  adminToken: '',
-};
+const CONTENT_COLLECTION = 'siteContent';
+const CONTENT_DOCUMENT = 'main';
 
 const isRecord = (value: unknown): value is Record<string, unknown> => {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -51,18 +49,6 @@ const readJson = <T>(key: string, fallback: T): T => {
   }
 };
 
-export const getStoredSettings = (): ContentSyncSettings => {
-  const storedSettings = readJson<ContentSyncSettings>(SETTINGS_STORAGE_KEY, initialSettings);
-  return {
-    apiUrl: storedSettings.apiUrl || initialSettings.apiUrl,
-    adminToken: storedSettings.adminToken || '',
-  };
-};
-
-export const storeSettings = (settings: ContentSyncSettings): void => {
-  window.localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings));
-};
-
 export const getStoredContent = (): SiteContent | null => {
   if (window.localStorage.getItem(CONTENT_VERSION_KEY) !== CONTENT_VERSION) {
     window.localStorage.removeItem(CONTENT_STORAGE_KEY);
@@ -79,53 +65,40 @@ export const storeContent = (content: SiteContent): void => {
   window.localStorage.setItem(CONTENT_STORAGE_KEY, JSON.stringify(normalizeContent(content)));
 };
 
-export const fetchRemoteContent = async (apiUrl: string): Promise<SiteContent | null> => {
-  if (!apiUrl.trim()) {
+export const fetchRemoteContent = async (): Promise<SiteContent | null> => {
+  const firebaseApp = getFirebaseApp();
+
+  if (!firebaseApp) {
     return null;
   }
 
-  const response = await fetch(apiUrl, {
-    method: 'GET',
-    headers: {
-      Accept: 'application/json',
-    },
-  });
+  const database = getFirestore(firebaseApp);
+  const snapshot = await getDoc(doc(database, CONTENT_COLLECTION, CONTENT_DOCUMENT));
 
-  if (!response.ok) {
-    throw new Error('לא ניתן לטעון תוכן מגוגל כרגע');
+  if (!snapshot.exists()) {
+    return null;
   }
 
-  const data = await response.json();
+  const data = snapshot.data();
   return normalizeContent(data.content ?? data);
 };
 
-export const saveRemoteContent = async (settings: ContentSyncSettings, content: SiteContent): Promise<void> => {
-  if (!settings.apiUrl.trim()) {
-    return;
+export const saveRemoteContent = async (content: SiteContent): Promise<boolean> => {
+  const firebaseApp = getFirebaseApp();
+
+  if (!firebaseApp) {
+    return false;
   }
 
-  if (!settings.adminToken.trim()) {
-    throw new Error('כדי לשמור לגוגל צריך להזין טוקן מנהל');
-  }
+  const database = getFirestore(firebaseApp);
+  await setDoc(doc(database, CONTENT_COLLECTION, CONTENT_DOCUMENT), {
+    content: normalizeContent(content),
+    updatedAt: serverTimestamp(),
+  }, { merge: true });
 
-  const response = await fetch(settings.apiUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'text/plain;charset=utf-8',
-    },
-    body: JSON.stringify({
-      token: settings.adminToken,
-      content: normalizeContent(content),
-    }),
-  });
+  return true;
+};
 
-  if (!response.ok) {
-    throw new Error('השמירה לגוגל נכשלה');
-  }
-
-  const data = await response.json().catch(() => ({ ok: true }));
-
-  if (data.ok === false) {
-    throw new Error(data.error || 'השמירה לגוגל נכשלה');
-  }
+export const isRemoteContentConfigured = (): boolean => {
+  return Boolean(getFirebaseApp());
 };

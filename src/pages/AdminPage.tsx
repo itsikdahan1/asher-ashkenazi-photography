@@ -1,5 +1,5 @@
 import { useEffect, useState, type Key, type ReactNode } from 'react';
-import { ArrowRight, Check, Download, LogOut, Plus, RefreshCw, Save, Trash2, Upload } from 'lucide-react';
+import { ArrowRight, Download, LogOut, Plus, RefreshCw, Save, Trash2, Upload } from 'lucide-react';
 import { DEFAULT_CONTENT } from '../data/defaultContent';
 import { useContent } from '../contexts/ContentContext';
 import { getFirebaseAuth, isAllowedAdminEmail, isFirebaseConfigured, signInWithGoogle, signOutAdmin } from '../services/firebaseAuth';
@@ -16,7 +16,6 @@ const tabs = [
   { id: 'testimonials', label: 'המלצות' },
   { id: 'logos', label: 'לוגואים' },
   { id: 'packages', label: 'חבילות' },
-  { id: 'sync', label: 'גוגל' },
 ] as const;
 
 type TabId = typeof tabs[number]['id'];
@@ -79,12 +78,11 @@ const Card = ({ children }: { children: ReactNode; key?: Key }) => (
 );
 
 export default function AdminPage() {
-  const { content, saveContent, reloadContent, saveSettings, settings, source, error } = useContent();
+  const { content, saveContent, reloadContent, isRemoteConfigured, source, error } = useContent();
   const [draft, setDraft] = useState<SiteContent>(content);
   const [activeTab, setActiveTab] = useState<TabId>('business');
   const [status, setStatus] = useState('');
   const [isSaving, setIsSaving] = useState(false);
-  const [settingsDraft, setSettingsDraft] = useState(settings);
   const [accessError, setAccessError] = useState('');
   const [adminUser, setAdminUser] = useState<User | null>(null);
   const [isAuthLoading, setIsAuthLoading] = useState(isFirebaseConfigured);
@@ -92,10 +90,6 @@ export default function AdminPage() {
   useEffect(() => {
     setDraft(content);
   }, [content]);
-
-  useEffect(() => {
-    setSettingsDraft(settings);
-  }, [settings]);
 
   useEffect(() => {
     const auth = getFirebaseAuth();
@@ -147,17 +141,12 @@ export default function AdminPage() {
 
     try {
       await saveContent(draft);
-      setStatus(settings.apiUrl ? 'נשמר בדאטה המרכזי של גוגל וגם בעותק מקומי בדפדפן.' : 'נשמר רק בדפדפן הזה. כדי לפרסם לכל הגולשים חייבים להגדיר חיבור Google Apps Script בלשונית גוגל.');
+      setStatus(isRemoteConfigured ? 'נשמר ופורסם לכל הגולשים דרך Firebase.' : 'נשמר כטיוטה מקומית. כדי לפרסם לכולם יש להגדיר Firebase בפריסה ולהפעיל Firestore.');
     } catch (saveError) {
       setStatus(saveError instanceof Error ? saveError.message : 'השמירה נכשלה');
     } finally {
       setIsSaving(false);
     }
-  };
-
-  const handleSettingsSave = () => {
-    saveSettings(settingsDraft);
-    setStatus('הגדרות החיבור נשמרו. מומלץ ללחוץ טעינה מחדש כדי למשוך תוכן מגוגל.');
   };
 
   const exportJson = () => {
@@ -255,15 +244,15 @@ export default function AdminPage() {
         <div className="mb-8 grid gap-4 md:grid-cols-3">
           <Card>
             <span className="block text-xs font-bold uppercase tracking-widest text-cream/40">מקור תוכן פעיל</span>
-            <strong className="mt-2 block text-2xl text-turquoise">{source === 'remote' ? 'Google' : source === 'local' ? 'דפדפן מקומי' : 'ברירת מחדל נקייה'}</strong>
+            <strong className="mt-2 block text-2xl text-turquoise">{source === 'remote' ? 'Firebase' : source === 'local' ? 'דפדפן מקומי' : 'ברירת מחדל נקייה'}</strong>
+          </Card>
+          <Card>
+            <span className="block text-xs font-bold uppercase tracking-widest text-cream/40">פרסום לכל הגולשים</span>
+            <strong className="mt-2 block text-2xl text-turquoise">{isRemoteConfigured ? 'פעיל' : 'לא מוגדר'}</strong>
           </Card>
           <Card>
             <span className="block text-xs font-bold uppercase tracking-widest text-cream/40">תמונות גלריה פעילות</span>
             <strong className="mt-2 block text-2xl text-turquoise">{enabledGallery.length}</strong>
-          </Card>
-          <Card>
-            <span className="block text-xs font-bold uppercase tracking-widest text-cream/40">סטטוס תוכן ציבורי</span>
-            <strong className="mt-2 block text-2xl text-turquoise">מציג רק תוכן אמיתי</strong>
           </Card>
         </div>
 
@@ -334,18 +323,8 @@ export default function AdminPage() {
           <EditablePackages draft={draft} patch={patch} />
         )}
 
-        {activeTab === 'sync' && (
-          <section className="grid gap-6 lg:grid-cols-2">
-            <Card>
-              <h2 className="mb-4 text-2xl font-black">חיבור Google Apps Script</h2>
-              <div className="space-y-4">
-                <Field label="כתובת API" value={settingsDraft.apiUrl} onChange={(value) => setSettingsDraft((current) => ({ ...current, apiUrl: value }))} placeholder="https://script.google.com/macros/s/.../exec" />
-                <Field label="טוקן מנהל" value={settingsDraft.adminToken} onChange={(value) => setSettingsDraft((current) => ({ ...current, adminToken: value }))} type="password" />
-                <button onClick={handleSettingsSave} className="inline-flex items-center gap-2 rounded-full bg-turquoise px-6 py-3 font-black text-charcoal">
-                  <Check size={18} /> שמור הגדרות חיבור
-                </button>
-              </div>
-            </Card>
+        {activeTab === 'packages' && (
+          <section className="mt-6">
             <Card>
               <h2 className="mb-4 text-2xl font-black">גיבוי ידני</h2>
               <div className="flex flex-wrap gap-3">
