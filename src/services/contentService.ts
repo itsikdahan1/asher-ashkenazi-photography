@@ -2,6 +2,8 @@ import { DEFAULT_CONTENT } from '../data/defaultContent';
 import type { ContentSyncSettings, SiteContent } from '../types';
 
 const CONTENT_STORAGE_KEY = 'asher_site_content_v1';
+const CONTENT_VERSION_KEY = 'asher_site_content_version';
+const CONTENT_VERSION = '2026-05-12-brand-content';
 const SETTINGS_STORAGE_KEY = 'asher_content_settings_v1';
 
 const initialSettings: ContentSyncSettings = {
@@ -62,11 +64,18 @@ export const storeSettings = (settings: ContentSyncSettings): void => {
 };
 
 export const getStoredContent = (): SiteContent | null => {
+  if (window.localStorage.getItem(CONTENT_VERSION_KEY) !== CONTENT_VERSION) {
+    window.localStorage.removeItem(CONTENT_STORAGE_KEY);
+    window.localStorage.setItem(CONTENT_VERSION_KEY, CONTENT_VERSION);
+    return null;
+  }
+
   const storedContent = readJson<unknown | null>(CONTENT_STORAGE_KEY, null);
   return storedContent ? normalizeContent(storedContent) : null;
 };
 
 export const storeContent = (content: SiteContent): void => {
+  window.localStorage.setItem(CONTENT_VERSION_KEY, CONTENT_VERSION);
   window.localStorage.setItem(CONTENT_STORAGE_KEY, JSON.stringify(normalizeContent(content)));
 };
 

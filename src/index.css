@@ -3,9 +3,9 @@
 
 @theme {
   --font-sans: "Assistant", ui-sans-serif, system-ui, sans-serif;
-  --color-charcoal: #0D0E10; /* Slightly lighter black for less harsh contrast */
-  --color-charcoal-light: #181A1E; /* For subtle depth */
-  --color-cream: #FAF7EF; /* Clean white-ish */
+  --color-charcoal: #070707;
+  --color-charcoal-light: #141313;
+  --color-cream: #F4EFE3;
   --color-turquoise: #2AC1BC;
   --color-turquoise-deep: #1A8A86;
 }
@@ -26,7 +26,7 @@
   body {
     @apply bg-charcoal text-cream antialiased selection:bg-turquoise selection:text-charcoal;
     direction: rtl;
-    background-image: radial-gradient(circle at 80% 0%, rgba(42, 193, 188, 0.08), transparent 34rem), url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.045'/%3E%3C/svg%3E");
+    background-image: radial-gradient(circle at 80% 0%, rgba(212, 190, 145, 0.1), transparent 34rem), radial-gradient(circle at 18% 14%, rgba(42, 193, 188, 0.055), transparent 26rem), url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.045'/%3E%3C/svg%3E");
     background-attachment: fixed;
     background-blend-mode: overlay;
     -ms-overflow-style: none;

@@ -88,17 +88,23 @@ export default function Header() {
 
         {/* Logo Section */}
         <motion.div
-          className="flex flex-col items-center cursor-pointer select-none transition-opacity hover:opacity-80"
+          className="flex flex-col items-center cursor-pointer select-none transition-opacity hover:opacity-85"
           onClick={handleLogoClick}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
         >
-          <span className="text-2xl md:text-3xl font-bold tracking-tighter text-cream uppercase leading-none">{business.name}</span>
-          <div className="flex items-center gap-2 mt-1">
-            <div className="h-[1px] w-4 bg-turquoise/30" />
-            <span className="text-[10px] uppercase tracking-[0.4em] text-turquoise/90 font-medium">{business.tagline}</span>
-            <div className="h-[1px] w-4 bg-turquoise/30" />
-          </div>
+          {business.logoUrl ? (
+            <img src={business.logoUrl} alt={`${business.name} - ${business.tagline}`} className="h-12 w-auto md:h-16 object-contain drop-shadow-[0_10px_30px_rgba(0,0,0,0.55)]" />
+          ) : (
+            <>
+              <span className="text-2xl md:text-3xl font-bold tracking-tighter text-cream uppercase leading-none">{business.name}</span>
+              <div className="flex items-center gap-2 mt-1">
+                <div className="h-[1px] w-4 bg-turquoise/30" />
+                <span className="text-[10px] uppercase tracking-[0.4em] text-turquoise/90 font-medium">{business.tagline}</span>
+                <div className="h-[1px] w-4 bg-turquoise/30" />
+              </div>
+            </>
+          )}
         </motion.div>
 
         {/* Desktop Nav */}

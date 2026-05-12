@@ -24,8 +24,14 @@ export default function Footer() {
         {/* Brand Column */}
         <div className="lg:w-1/3">
           <div className="mb-8">
-            <span className="text-4xl font-bold tracking-tighter text-white block mb-2">{business.name}</span>
-            <span className="text-xs uppercase tracking-[0.5em] text-turquoise/90 font-medium">{business.tagline}</span>
+            {business.logoUrl ? (
+              <img src={business.logoUrl} alt={`${business.name} - ${business.tagline}`} className="mb-4 h-20 w-auto object-contain drop-shadow-[0_10px_30px_rgba(0,0,0,0.55)]" loading="lazy" />
+            ) : (
+              <>
+                <span className="text-4xl font-bold tracking-tighter text-white block mb-2">{business.name}</span>
+                <span className="text-xs uppercase tracking-[0.5em] text-turquoise/90 font-medium">{business.tagline}</span>
+              </>
+            )}
           </div>
           {business.description && (
             <p className="text-cream/60 text-lg md:text-xl font-normal leading-relaxed mb-10 italic">
