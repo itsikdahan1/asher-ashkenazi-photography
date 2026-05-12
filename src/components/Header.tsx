@@ -3,13 +3,17 @@ import { Menu, X, MessageCircle } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useContent } from '../contexts/ContentContext';
 import { getWhatsappUrl } from '../utils/contentHelpers';
+import { useNavigate } from 'react-router-dom';
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const [clickCount, setClickCount] = useState(0);
+  const [clickTimer, setClickTimer] = useState<NodeJS.Timeout | null>(null);
   const { content } = useContent();
   const { business } = content;
   const whatsappUrl = getWhatsappUrl(business.whatsappNumber);
   const { scrollY } = useScroll();
+  const navigate = useNavigate();
   
   const headerBg = useTransform(
     scrollY,
@@ -37,6 +41,36 @@ export default function Header() {
     { name: 'צור קשר', href: '#contact' },
   ];
 
+  const handleLogoClick = () => {
+    setClickCount((prev) => prev + 1);
+
+    if (clickTimer) {
+      clearTimeout(clickTimer);
+    }
+
+    const newTimer = setTimeout(() => {
+      setClickCount(0);
+    }, 1000);
+
+    setClickTimer(newTimer);
+
+    if (clickCount + 1 === 3) {
+      setClickCount(0);
+      if (clickTimer) {
+        clearTimeout(clickTimer);
+      }
+      navigate('/admin');
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      if (clickTimer) {
+        clearTimeout(clickTimer);
+      }
+    };
+  }, [clickTimer]);
+
   return (
     <motion.header 
       style={{ backgroundColor: headerBg, paddingTop: headerPadding, paddingBottom: headerPadding }}
@@ -59,7 +93,7 @@ export default function Header() {
         ) : <div className="hidden md:block" />}
 
         {/* Logo Section */}
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center cursor-pointer select-none" onClick={handleLogoClick}>
           <span className="text-2xl md:text-3xl font-bold tracking-tighter text-cream uppercase leading-none">{business.name}</span>
           <div className="flex items-center gap-2 mt-1">
             <div className="h-[1px] w-4 bg-turquoise/30" />
