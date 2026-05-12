@@ -94,7 +94,7 @@ export default function Header() {
           whileTap={{ scale: 0.98 }}
         >
           {business.logoUrl ? (
-            <img src={business.logoUrl} alt={`${business.name} - ${business.tagline}`} className="h-12 w-auto md:h-16 object-contain drop-shadow-[0_10px_30px_rgba(0,0,0,0.55)]" />
+            <img src={business.logoUrl} alt={`${business.name} - ${business.tagline}`} className="h-10 w-auto md:h-14 max-w-[200px] md:max-w-[280px] object-contain drop-shadow-[0_10px_30px_rgba(0,0,0,0.55)]" />
           ) : (
             <>
               <span className="text-2xl md:text-3xl font-bold tracking-tighter text-cream uppercase leading-none">{business.name}</span>

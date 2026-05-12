@@ -25,7 +25,7 @@ export default function Footer() {
         <div className="lg:w-1/3">
           <div className="mb-8">
             {business.logoUrl ? (
-              <img src={business.logoUrl} alt={`${business.name} - ${business.tagline}`} className="mb-4 h-20 w-auto object-contain drop-shadow-[0_10px_30px_rgba(0,0,0,0.55)]" loading="lazy" />
+              <img src={business.logoUrl} alt={`${business.name} - ${business.tagline}`} className="mb-4 h-16 w-auto max-w-[240px] md:max-w-[320px] object-contain drop-shadow-[0_10px_30px_rgba(0,0,0,0.55)]" loading="lazy" />
             ) : (
               <>
                 <span className="text-4xl font-bold tracking-tighter text-white block mb-2">{business.name}</span>
