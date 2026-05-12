@@ -28,9 +28,9 @@ export default function Header() {
   );
 
   const navItems = [
+    { name: 'גלריה', href: '#gallery' },
     { name: 'שירותים', href: '#services' },
     { name: 'חבילות', href: '#packages' },
-    { name: 'גלריה', href: '#gallery' },
     { name: 'עלי', href: '#about' },
     { name: 'צור קשר', href: '#contact' },
   ];
@@ -82,7 +82,7 @@ export default function Header() {
             whileTap={{ scale: 0.98 }}
           >
             <MessageCircle size={18} className="text-turquoise" />
-            <span>בדיקה מהירה</span>
+            <span>לתיאום צילום</span>
           </motion.a>
         ) : <div className="hidden md:block" />}
 
@@ -154,7 +154,7 @@ export default function Header() {
                 className="flex items-center justify-center gap-2 bg-turquoise text-charcoal py-4 rounded-2xl font-black shadow-lg shadow-turquoise/10"
               >
                 <MessageCircle size={24} />
-                <span>דבר איתי בוואטסאפ</span>
+                <span>לתיאום צילום בוואטסאפ</span>
               </a>
             )}
           </div>
