@@ -21,12 +21,6 @@ export default function Header() {
     ['rgba(13, 14, 16, 0)', 'rgba(13, 14, 16, 0.9)']
   );
 
-  const headerBorder = useTransform(
-    scrollY,
-    [0, 100],
-    ['border-transparent', 'border-white/5']
-  );
-
   const headerPadding = useTransform(
     scrollY,
     [0, 100],
@@ -74,7 +68,7 @@ export default function Header() {
   return (
     <motion.header 
       style={{ backgroundColor: headerBg, paddingTop: headerPadding, paddingBottom: headerPadding }}
-      className="fixed top-0 left-0 right-0 z-50 transition-colors duration-300 border-b backdrop-blur-md"
+      className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.055] transition-colors duration-300 backdrop-blur-md"
     >
       <nav className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         {/* WhatsApp CTA */}
